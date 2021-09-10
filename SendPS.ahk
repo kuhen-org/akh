@@ -1,48 +1,51 @@
-; AHKプログラムをインストールしてからお使いください
-; このコードを　SJIS　で 【SendPS.ahk】として保存してから使用すること！
-;
 ;//////////////////////////////////////////////
 ;【署名】【URL】【ログインID PW】 管理プログラム
 ;  By skojima@kuhen.org
 
-Vertext=Ver.2021-09-08_2107
+Vertext=Ver.2021-09-10_0840
 
 ;//////////////////////////////////////////////
 
 
 ;///////////////
-; 初期設定：登録可能数を設定
+; 初期設定
 ;///////////////
 
+;登録可能数を設定
 Gvarkosu=25
+
+;使用するiniファイルのパスとファイル名
+
+global Gvarinifile ;グローバル変数宣言
+Gvarinifile=%A_MyDocuments%\SendPS.ini
 
 ;///////////////
 
 MsgBox ,,　【署名】【URL】【ログインID PW】 管理プログラム    %Vertext%,【F12】　１回：メニュー　２回：設定ファイル直接編集　長押し：設定再読込`n`nこのプログラムは無保証です自己責任でお使いください   By skojima@kuhen.org , 3
 
 
-;/// マイドキュメント内に　\SendPS.ini　が存在しないなら＞初期設定
-IfNotExist, %A_MyDocuments%\SendPS.ini
+;/// マイドキュメント内に　SendPS.ini　が存在しないなら＞初期設定
+IfNotExist, %Gvarinifile%
 {
-FileAppend,,%A_MyDocuments%\SendPS.ini
-msgbox,【重要】今から署名、パスワード保存用として`n`n【%A_MyDocuments%\SendPS.ini】`n`nを作成＆使用します！`n`n保存されるデータは暗号化されませんのでご注意ください！
+FileAppend,,%Gvarinifile%
+msgbox,【重要】今から署名、パスワード保存用として`n`n【%Gvarinifile%】`n`nを作成＆使用します！`n`n保存されるデータは暗号化されませんのでご注意ください！
 }
 
 ;---------------------------------------------------------------
 ;/// 署名の最大個数を読込
-IniRead, sig_kosu,%A_MyDocuments%\SendPS.ini, sig, kosu
+IniRead, sig_kosu,%Gvarinifile%, sig, kosu
 
 ;/// エラーなら＞初期設定
 IfEqual, sig_kosu,ERROR
 {
-IniWrite, %Gvarkosu% , %A_MyDocuments%\SendPS.ini, sig, kosu
-IniRead, sig_kosu,%A_MyDocuments%\SendPS.ini, sig, kosu
+IniWrite, %Gvarkosu% , %Gvarinifile%, sig, kosu
+IniRead, sig_kosu,%Gvarinifile%, sig, kosu
 
   MsgBox, 登録可能「署名」数 %sig_kosu%
 
 Loop , %Gvarkosu% {
-IniWrite, "" , %A_MyDocuments%\SendPS.ini, sig, sigid%A_index%
-IniWrite,"", %A_MyDocuments%\SendPS.ini, sig, sigdata%A_index%
+IniWrite, "" , %Gvarinifile%, sig, sigid%A_index%
+IniWrite,"", %Gvarinifile%, sig, sigdata%A_index%
 
 }
 
@@ -50,46 +53,46 @@ IniWrite,"", %A_MyDocuments%\SendPS.ini, sig, sigdata%A_index%
 
 ;/// 署名出力用メニュー作成
 Loop , %sig_kosu% {
-IniRead, sig_id,%A_MyDocuments%\SendPS.ini, sig, sigid%A_index%
-IniRead, sig_data,%A_MyDocuments%\SendPS.ini, sig, sigdata%A_index%
-Menu , kuhensig , Add , 【sigid%A_index%】 %sig_id% (出力: %sig_data% ),SENDSIG
+IniRead, sig_id,%Gvarinifile%, sig, sigid%A_index%
+IniRead, sig_data,%Gvarinifile%, sig, sigdata%A_index%
+Menu , kuhensig , Add , 【sigid%A_index%】 %sig_id% %sig_data%,SENDSIG
 }
 
 ;/// 署名設定用メニュー作成
 Loop , %sig_kosu% {
-IniRead, sig_id,%A_MyDocuments%\SendPS.ini, sig, sigid%A_index%
+IniRead, sig_id,%Gvarinifile%, sig, sigid%A_index%
 Menu , kuhensigset , Add ,【sigid%A_index%】%sig_id%,SAVESIG
 }
 
 
 ;---------------------------------------------------------------
 ;/// パスワードの最大個数を読込
-IniRead, pw_kosu,%A_MyDocuments%\SendPS.ini, pw, kosu
+IniRead, pw_kosu,%Gvarinifile%, pw, kosu
 
 ;/// エラーなら＞初期設定
 IfEqual, pw_kosu,ERROR
 {
-IniWrite, %Gvarkosu% , %A_MyDocuments%\SendPS.ini, pw, kosu
-IniRead, pw_kosu,%A_MyDocuments%\SendPS.ini, pw, kosu
+IniWrite, %Gvarkosu% , %Gvarinifile%, pw, kosu
+IniRead, pw_kosu,%Gvarinifile%, pw, kosu
 
   MsgBox, 登録可能「パスワード」数 %pw_kosu%
 
 Loop , %Gvarkosu% {
-IniWrite, "" , %A_MyDocuments%\SendPS.ini, pw, pwid%A_index%
-IniWrite,"", %A_MyDocuments%\SendPS.ini, pw, pwdata%A_index%
+IniWrite, "" , %Gvarinifile%, pw, pwid%A_index%
+IniWrite,"", %Gvarinifile%, pw, pwdata%A_index%
 }
 
 }
 
 ;/// パスワード出力用メニュー作成
 Loop , %pw_kosu% {
-IniRead, pw_id,%A_MyDocuments%\SendPS.ini, pw, pwid%A_index%
+IniRead, pw_id,%Gvarinifile%, pw, pwid%A_index%
 Menu , kuhenpw , Add ,【pwid%A_index%】 %pw_id%,SENDPW
 }
 
 ;/// パスワード設定用メニュー作成
 Loop , %pw_kosu% {
-IniRead, pw_id,%A_MyDocuments%\SendPS.ini, pw, pwid%A_index%
+IniRead, pw_id,%Gvarinifile%, pw, pwid%A_index%
 Menu , kuhenpwset , Add ,【pwid%A_index%】%pw_id%,SAVEPW
 
 }
@@ -152,9 +155,9 @@ Sleep,300
 
 IMEGetstateOFF()
 
-  IniRead, sig_id,%A_MyDocuments%\SendPS.ini, sig, sigid%id%
+  IniRead, sig_id,%Gvarinifile%, sig, sigid%id%
 Sleep,200
-  IniRead, sig_data,%A_MyDocuments%\SendPS.ini, sig, sigdata%id%
+  IniRead, sig_data,%Gvarinifile%, sig, sigdata%id%
 Sleep,200
 
 SIGVar=%sig_data%
@@ -191,12 +194,12 @@ Sleep,200
 
 IMEGetstateOFF()
 
-  IniRead, pw_id,%A_MyDocuments%\SendPS.ini, pw, pwid%id%
+  IniRead, pw_id,%Gvarinifile%, pw, pwid%id%
 
 Sleep,200
 Clipboard =%pw_id%
 
-  IniRead, pw_data,%A_MyDocuments%\SendPS.ini, pw, pwdata%id%
+  IniRead, pw_data,%Gvarinifile%, pw, pwdata%id%
 
 If StrLen(pw_data) = 0{
 MsgBox,,,エラー：パスワードが「空白」です！`n`n◆【パスワード設定】で登録を！
@@ -253,7 +256,7 @@ Reload
 }
 KeyWait, %key%, D, T0.2
 If(!ErrorLevel){         ;2度押しした場合
-Run , %A_MyDocuments%\SendPS.ini
+Run , %Gvarinifile%
     KeyWait, %key%
     return
 }else{                   ;短押しした場合
@@ -273,15 +276,15 @@ SIGSET(No){
 
 IMEGetstateON()
 
-IniRead, sig_sigid,%A_MyDocuments%\SendPS.ini, sig, sigid%No%
+IniRead, sig_sigid,%Gvarinifile%, sig, sigid%No%
 
-InputBox, new_sig_sigid,【署名】「表示名」を登録,【2-1】現在の【表示名】→【　%sig_sigid%　】`n`n登録したい　「表示名」を入力`n`n変更 しない→【Cancel】,,600,200
+InputBox, new_sig_sigid,【署名】「表示名」を登録,【2-1】現在の【表示名】→【　%sig_sigid%　】`n`n登録したい　「表示名」を入力`n`n変更 しない→【Cancel】,,600,200,,,,,%sig_sigid%
 
 If ErrorLevel = 0
 {
-IniWrite, %new_sig_sigid% , %A_MyDocuments%\SendPS.ini, sig, sigid%No%
+IniWrite, %new_sig_sigid% , %Gvarinifile%, sig, sigid%No%
 sleep 300
-IniRead, sig_sigid2,%A_MyDocuments%\SendPS.ini, sig, sigid%No%
+IniRead, sig_sigid2,%Gvarinifile%, sig, sigid%No%
 sleep 300
   msgbox,現在の【表示名】は`n`n【　%sig_sigid2%　】`n`nです。
 }
@@ -291,15 +294,15 @@ Else
 }
 
 
-IniRead, sig_sigdata,%A_MyDocuments%\SendPS.ini, sig, sigdata%No%
+IniRead, sig_sigdata,%Gvarinifile%, sig, sigdata%No%
 
-InputBox, new_sig_sigdata,【署名】「本文」を登録,【2-2】現在の【署名「本文」】→【　%sig_sigdata%　】`n`n登録したい　【署名】「本文」、「URL」等　を入力`n`n【改行】は → \n を入力してください`n`n変更 しない→【Cancel】,,800,250
+InputBox, new_sig_sigdata,【署名】「本文」を登録,【2-2】現在の【署名「本文」】→【　%sig_sigdata%　】`n`n登録したい　【署名】「本文」、「URL」等　を入力`n`n【改行】は → ￥n を半角で入力してください`n`n変更 しない→【Cancel】,,800,250,,,,,%sig_sigdata%
 
 If ErrorLevel = 0
 {
-IniWrite, %new_sig_sigdata% , %A_MyDocuments%\SendPS.ini, sig, sigdata%No%
+IniWrite, %new_sig_sigdata% , %Gvarinifile%, sig, sigdata%No%
 sleep 300
-IniRead, sig_sigdata2,%A_MyDocuments%\SendPS.ini, sig, sigdata%No%
+IniRead, sig_sigdata2,%Gvarinifile%, sig, sigdata%No%
 sleep 300
   msgbox,現在の【「署名」本文】は`n`n【　%sig_sigdata2%　】`n`nです。
   
@@ -322,15 +325,15 @@ PWSET(No){
 
 IMEGetstateOFF()
 
-IniRead, pw_pwid,%A_MyDocuments%\SendPS.ini, pw, pwid%No%
+IniRead, pw_pwid,%Gvarinifile%, pw, pwid%No%
 
-InputBox, new_pw_pwid,【パスワード】のIDを登録,【2-1】現在の【ID】→【　%pw_pwid%　】`n`n登録ログイン用　「ID」　を入力`n`n変更 しない→【Cancel】,,400,250
+InputBox, new_pw_pwid,【パスワード】のIDを登録,【2-1】現在の【ID】→【　%pw_pwid%　】`n`n登録ログイン用　「ID」　を入力`n`n変更 しない→【Cancel】,,500,250,,,,,%pw_pwid%
 
 If ErrorLevel = 0
 {
-IniWrite, %new_pw_pwid% , %A_MyDocuments%\SendPS.ini, pw, pwid%No%
+IniWrite, %new_pw_pwid% , %Gvarinifile%, pw, pwid%No%
 sleep 300
-IniRead, pw_pwid2,%A_MyDocuments%\SendPS.ini, pw, pwid%No%
+IniRead, pw_pwid2,%Gvarinifile%, pw, pwid%No%
 sleep 300
   msgbox,現在の【ID】は`n`n【　%pw_pwid2%　】`n`nです。
 }
@@ -340,15 +343,15 @@ Else
 }
 
 
-IniRead, pw_pwdata,%A_MyDocuments%\SendPS.ini, pw, pwdata%No%
+IniRead, pw_pwdata,%Gvarinifile%, pw, pwdata%No%
 
-InputBox, new_pw_pwdata,【パスワード】の登録,【2-2】現在の【パスワード】→【　%pw_pwdata%　】`n`n登録ログイン用　「パスワード」　を入力`n`n変更 しない→【Cancel】,,400,300
+InputBox, new_pw_pwdata,【パスワード】の登録,【2-2】現在の【パスワード】→【　%pw_pwdata%　】`n`n登録ログイン用　「パスワード」　を入力`n`n変更 しない→【Cancel】,,500,250,,,,,%pw_pwdata%
 
 If ErrorLevel = 0
 {
-IniWrite, %new_pw_pwdata% , %A_MyDocuments%\SendPS.ini, pw, pwdata%No%
+IniWrite, %new_pw_pwdata% , %Gvarinifile%, pw, pwdata%No%
 sleep 300
-IniRead, pw_pwdata2,%A_MyDocuments%\SendPS.ini, pw, pwdata%No%
+IniRead, pw_pwdata2,%Gvarinifile%, pw, pwdata%No%
 sleep 300
   msgbox,現在の【パスワード】は`n`n【　%pw_pwdata2%　】`n`nです。
 }
@@ -410,3 +413,4 @@ IMEGetstateON(){
 
 }
 ;===============================================================================================
+
