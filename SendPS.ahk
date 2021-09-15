@@ -6,8 +6,9 @@
 ;【署名】【URL】【ログインID PW】 管理プログラム
 ;  By skojima@kuhen.org
 
-Vertext=Ver.2021-09-10_0850
-
+Vertext=Ver.2021-09-15_1223
+;パスワード貼付時の確認メッセージボックスを最前面に表示するようにした
+;メニューに１行空白行を追加
 ;//////////////////////////////////////////////
 
 
@@ -112,6 +113,8 @@ Menu , kuhen , Add ,■【署名】【URL】等を出力, :kuhensig
 Menu , kuhen , Add ;
 Menu , kuhen , Add ,■【パスワードのID、PWを出力】, :kuhenpw
 Menu , kuhen , Add ;
+Menu , kuhen , Add ,　　　,nothing
+Menu , kuhen , Add ;
 Menu , kuhen , Add ,　　　◆【署名等設定】　　「登録名」と「署名本文」、パスワードで使う「URL」や「メモ」等を設定, :kuhensigset
 Menu , kuhen , Add ;
 Menu , kuhen , Add ,　　　◆【パスワード設定】　　「ID」 と 「パスワード」 を設定, :kuhenpwset
@@ -208,7 +211,7 @@ Clipboard =%pw_id%
 If StrLen(pw_data) = 0{
 MsgBox,,,エラー：パスワードが「空白」です！`n`n◆【パスワード設定】で登録を！
 }else{
-MsgBox,,,現在【 %pw_id% 】が「貼り付け」で使えます`n`nこの後は「パスワード」が「貼り付け」で使えます
+MsgBox,4096,,現在【 %pw_id% 】が「貼り付け」で使えます`n`nこの後は「パスワード」が「貼り付け」で使えます
 }
 
 
@@ -417,4 +420,3 @@ IMEGetstateON(){
 
 }
 ;===============================================================================================
-
