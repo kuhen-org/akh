@@ -6,7 +6,7 @@
 ;【署名】【URL】【ログインID PW】 管理プログラム
 ;  By skojima@kuhen.org
 
-Vertext=Ver.2021-09-15_1223
+Vertext=Ver.2021-10-14_0730
 ;パスワード貼付時の確認メッセージボックスを最前面に表示するようにした
 ;メニューに１行空白行を追加
 ;//////////////////////////////////////////////
@@ -179,10 +179,25 @@ MsgBox,,,【 %sig_id% 】`n`n%SIGVar%`n`n「貼り付け」で使えます,3
 
 ;URLなら開く
  If SubStr( sig_data,1,4)="http" {
-  MsgBox,4,,【 %sig_id% 】`n`n%SIGVar%`n`nを開きますか？
-   IfMsgBox, Yes
+  ;MsgBox,4,,【 %sig_id% 】`n`n%SIGVar%`n`nを開きますか？
+  ; IfMsgBox, Yes
     Run ,  %sig_data%
- }
+  }
+
+;ドライブCなら開く
+ If SubStr( sig_data,2,2)=":\" {
+  ;MsgBox,4,,【 %sig_id% 】`n`n%SIGVar%`n`nを開きますか？
+  ; IfMsgBox, Yes
+    Run ,  %sig_data%
+  }
+
+;ネットフォルダなら開く
+ If SubStr( sig_data,1,2)="\\" {
+  ;MsgBox,4,,【 %sig_id% 】`n`n%SIGVar%`n`nを開きますか？
+  ; IfMsgBox, Yes
+    Run ,  %sig_data%
+  }
+
 
 }
 
